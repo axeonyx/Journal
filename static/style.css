@@ -1,0 +1,75 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the container horizontally */
+    background-color: #f4f4f4;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: 1200px; /* Limit the maximum width of the container */
+}
+
+h2 {
+    color: #333;
+}
+
+textarea {
+    width: calc(100% - 20px);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    height: 100px;
+    resize: none;
+}
+
+input[type=submit] {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type=submit]:hover {
+    background-color: #003d82;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    padding: 20px;
+    width: 100%; /* Take the full width */
+    max-width: 800px; /* Limit the maximum width */
+    margin: auto; /* Center the wrapper in the body */
+}
+
+.results {
+    width: 100%; /* Take the full width */
+    text-align: left;
+    margin-bottom: 20px; /* Add space between the results and the chart */
+}
+
+.emotion {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-left: 5px solid #0056b3;
+}
+
+#emotionChart {
+    width: 100%; /* Make the chart take the full width of its parent */
+    height: 400px; /* Set a fixed height for the chart */
+}

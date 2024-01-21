@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Journal Emotion Analysis</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function(){
+            var emotionChart; // Declare a variable for the chart
+            $('form').on('submit', function(event){
+                $.ajax({
+                    data : {
+                        journal : $('#journalInput').val()
+                    },
+                    type : 'POST',
+                    url : '/analyze'
+                })
+                .done(function(data){
+                    $('.results').empty(); // Clear previous results
+                    if(emotionChart){ // If a chart already exists, destroy it
+                        emotionChart.destroy();
+                    }
+                    var emotionData = [];
+                    var totalScore = 0;
+                    $.each(data.sentiments, function(emotion, score){
+                        totalScore += score; // Sum up all scores
+                        emotionData.push({emotion: emotion.toUpperCase(), score: score});
+                    });
+
+                    // Normalize scores to total to 100
+                    emotionData = emotionData.map(function(data){
+                        return {emotion: data.emotion, score: (data.score / totalScore) * 100};
+                    });
+                    
+                    // Sort the emotions based on score in descending order
+                    emotionData.sort(function(a, b){return b.score - a.score;});
+
+                    var emotions = emotionData.map(data => data.emotion);
+                    var scores = emotionData.map(data => data.score.toFixed(2)); // Scores are now percentages
+                    
+                    // Update results with sorted data
+                    $.each(emotionData, function(index, data){
+                        $('.results').append($('<div>').addClass('emotion').text(`${data.emotion}: ${data.score.toFixed(2)}%`));
+                    });
+
+                    // Chart rendering
+                    var ctx = document.getElementById('emotionChart').getContext('2d');
+                    emotionChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: emotions,
+                            datasets: [{
+                                label: 'Emotion Scores (%)',
+                                data: scores,
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return value + '%'; // Add percentage sign to the y-axis labels
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+                event.preventDefault(); // Prevent default form submission
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Journal Entry</h2>
+        <form>
+            <textarea id="journalInput" name="journal" placeholder="Write your journal here..."></textarea>
+            <input type="submit" value="Analyze">
+        </form>
+        <div class="content-wrapper">
+            <div class="results">
+                <!-- Results will be updated here by JavaScript -->
+            </div>
+            <canvas id="emotionChart"></canvas>
+        </div>
+    </div>
+</body>
+</html>
